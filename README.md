@@ -61,6 +61,11 @@ Set correct paths:
 source /path/to/esp-idf/export.sh
 export ESP_MATTER_PATH=/path/to/esp-matter
 source "$ESP_MATTER_PATH/export.sh"
+/mnt/nvm/.espressif/v6.0.2/esp-idf/export.sh 
+
+. /mnt/nvm/.espressif/v6.0.2/esp-idf/export.sh
+. /mnt/nvm/esp-matter/export.sh
+idf.py build
 
 Set the correct device:    
     idf.py set-target esp32c6
