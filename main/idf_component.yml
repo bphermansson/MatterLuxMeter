@@ -12,3 +12,4 @@ dependencies:
     version: '*'
   esp-idf-lib/veml7700:
     version: '*'
+  espressif/cjson: "^1.7.19"

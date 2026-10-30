@@ -9,6 +9,7 @@ This is a lux-meter with Matter support. This means you can use it for getting t
 The main branch is just a Luxmeter that reports to Google Home. But this value cant be used in automations, support for that comes later according to Google. As a work-around I created the branch "DeviceSimulatesALampToMakeAutomationsEasier". This code creates not only a Luxmeter but also a light. The light turns on when the sensor detects darkness, and the light is connected to Google Home. And the state of a light can be used in automations, so this branch can be used to trigger automations based on the lightlevel in the room. Ugly trick maybe, or a nice work-around? :)
 
 I use ESP-IDF v 5.4.1 and Matter 1.4.<br>
+For ESP-IDF 6.x, the project maps ESP-Matter's legacy `json` component requirement to `espressif/cjson`.
 Download Matter, <https://github.com/espressif/esp-matter><br>
 and ESP-IDF, <https://github.com/espressif/esp-idf><br>
 In VS Code, install the ESP-IDF extension and set it up to point to where you downloaded the SDK:s above.
@@ -56,6 +57,11 @@ Then use menuconfig to set some values needed for matter:
     Vendor Id = 0xFFF2
     (0x8001) Device Product Id
   
+Set correct paths:
+source /path/to/esp-idf/export.sh
+export ESP_MATTER_PATH=/path/to/esp-matter
+source "$ESP_MATTER_PATH/export.sh"
+
 Set the correct device:    
     idf.py set-target esp32c6
 
