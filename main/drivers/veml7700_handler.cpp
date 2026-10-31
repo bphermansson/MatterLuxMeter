@@ -3,7 +3,6 @@
 #include <esp_log.h>
 #include <string.h>
 
-static const char *TAG = "VEML_DRV";
 static i2c_dev_t dev;
 static veml7700_config_t config;
 
