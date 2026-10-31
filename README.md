@@ -1,14 +1,12 @@
 
 # MatterLuxMeter
 
-This is a lux-meter with Matter support. This means you can use it for getting the current light level inte your home automation system, I use Google Home. The hardware I use is a VEML7700 sensor and a ESP32C6, but you can just as well use a S3, C3 or whatever. The Esp32 do not have defined SCL and SCA pins, so you can use which ones you like, just adjust the code in veml7700_handler.cpp:
-
-  #define SDA_GPIO_NUM 5<br>
-  #define SCL_GPIO_NUM 6
+This is a lux-meter with Matter support. This means you can use it for getting the current light level inte your home automation system, I use Google Home. The hardware I use is a VEML7700 sensor and a ESP32C6, but you can just as well use a S3, C3 or whatever. The Esp32 do not have defined SCL and SCA pins, so you can use which ones you like, just adjust the code in the settings (Cog in the bottom panel or 'idf.py menuconfig'. Then 'Device Configuration', 'I2C SDA Pin' and 'I2C SDA Pin'.
 
 The main branch is just a Luxmeter that reports to Google Home. But this value cant be used in automations, support for that comes later according to Google. As a work-around I created the branch "DeviceSimulatesALampToMakeAutomationsEasier". This code creates not only a Luxmeter but also a light. The light turns on when the sensor detects darkness, and the light is connected to Google Home. And the state of a light can be used in automations, so this branch can be used to trigger automations based on the lightlevel in the room. Ugly trick maybe, or a nice work-around? :)
 
-I use ESP-IDF v 5.4.1 and Matter 1.4.<br>
+I use ESP-IDF v 6.0.2 and Matter 1.6.1.<br>
+For ESP-IDF 6.x, the project maps ESP-Matter's legacy `json` component requirement to `espressif/cjson`.
 Download Matter, <https://github.com/espressif/esp-matter><br>
 and ESP-IDF, <https://github.com/espressif/esp-idf><br>
 In VS Code, install the ESP-IDF extension and set it up to point to where you downloaded the SDK:s above.
@@ -36,10 +34,6 @@ with:
 
 in the command above.  
 
-Then run Docker to get the correct ESP-IDF and Matter versions:  
-
-    docker run -it --rm --device=/dev/ttyACM0:/dev/ttyACM0 --privileged -v $PWD:/project espressif/esp-matter:latest /bin/bash<br>
-
 Then use menuconfig to set some values needed for matter:  
 
     idf.py menuconfig
@@ -56,6 +50,16 @@ Then use menuconfig to set some values needed for matter:
     Vendor Id = 0xFFF2
     (0x8001) Device Product Id
   
+Set correct paths:
+source /path/to/esp-idf/export.sh
+export ESP_MATTER_PATH=/path/to/esp-matter
+source "$ESP_MATTER_PATH/export.sh"
+/mnt/nvm/.espressif/v6.0.2/esp-idf/export.sh 
+
+. /mnt/nvm/.espressif/v6.0.2/esp-idf/export.sh
+. /mnt/nvm/esp-matter/export.sh
+idf.py build
+
 Set the correct device:    
     idf.py set-target esp32c6
 
