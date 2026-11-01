@@ -33,13 +33,13 @@ using namespace esp_matter::attribute;
 using namespace esp_matter::endpoint;
 using namespace chip::app::Clusters;
 
-static esp_err_t factory_reset_button_register()
-{
-    button_handle_t push_button;
-    esp_err_t err = bsp_iot_button_create(&push_button, NULL, BSP_BUTTON_NUM);
-    VerifyOrReturnError(err == ESP_OK, err);
-    return app_reset_button_register(push_button);
-}
+// static esp_err_t factory_reset_button_register()
+// {
+//     button_handle_t push_button;
+//     esp_err_t err = bsp_iot_button_create(&push_button, NULL, BSP_BUTTON_NUM);
+//     VerifyOrReturnError(err == ESP_OK, err);
+//     return app_reset_button_register(push_button);
+// }
 
 static void open_commissioning_window_if_necessary()
 {
@@ -115,8 +115,8 @@ extern "C" void app_main()
     /* Initialize the ESP NVS layer */
     nvs_flash_init();
     /* Initialize push button on the dev-kit to reset the device */
-    esp_err_t err = factory_reset_button_register();
-    ABORT_APP_ON_FAILURE(ESP_OK == err, ESP_LOGE(TAG, "Failed to initialize reset button, err:%d", err));
+    // esp_err_t err = factory_reset_button_register();
+    // ABORT_APP_ON_FAILURE(ESP_OK == err, ESP_LOGE(TAG, "Failed to initialize reset button, err:%d", err));
 
     /* Create a Matter node and add the mandatory Root Node device type on endpoint 0 */
     node::config_t node_config;
@@ -132,7 +132,7 @@ extern "C" void app_main()
     uint16_t sensor_endpoint_id = endpoint::get_id(endpoint);
 
     /* Matter start */
-    err = esp_matter::start(app_event_cb);
+    esp_err_t err = esp_matter::start(app_event_cb);
     ABORT_APP_ON_FAILURE(err == ESP_OK, ESP_LOGE(TAG, "Failed to start Matter, err:%d", err));
 
     if (sensor_veml7700_init() == ESP_OK) {

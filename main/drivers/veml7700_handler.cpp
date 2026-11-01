@@ -6,9 +6,6 @@
 static i2c_dev_t dev;
 static veml7700_config_t config;
 
-#define SDA_GPIO_NUM 5
-#define SCL_GPIO_NUM 6
-
 esp_err_t sensor_veml7700_init(void) {
     memset(&dev, 0, sizeof(i2c_dev_t));
     
@@ -16,7 +13,7 @@ esp_err_t sensor_veml7700_init(void) {
     if (err != ESP_OK && err != ESP_ERR_INVALID_STATE) return err;
 
     // Här lägger vi till (gpio_num_t) castingen:
-    err = veml7700_init_desc(&dev, I2C_NUM_0, (gpio_num_t)SDA_GPIO_NUM, (gpio_num_t)SCL_GPIO_NUM);
+    err = veml7700_init_desc(&dev, I2C_NUM_0, (gpio_num_t)CONFIG_SHTC3_I2C_SDA_PIN, (gpio_num_t)CONFIG_SHTC3_I2C_SCL_PIN);
     if (err != ESP_OK) return err;
 
     err = veml7700_probe(&dev);

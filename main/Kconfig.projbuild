@@ -2,13 +2,13 @@ menu "Device Configuration"
 
     config SHTC3_I2C_SDA_PIN
         int "I2C SDA Pin"
-        default 4
+        default 5
         help
             GPIO number for I2C master data
 
     config SHTC3_I2C_SCL_PIN
         int "I2C SCL Pin"
-        default 5
+        default 6
         help
             GPIO number for I2C master clock
 
