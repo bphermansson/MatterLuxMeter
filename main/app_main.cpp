@@ -18,6 +18,10 @@
 #include <app_openthread_config.h>
 #include <app_reset.h>
 #include <common_macros.h>
+// v1.6.1: sanctioned setter for the read-only IlluminanceMeasurement MeasuredValue.
+// attribute::update() is rejected (ESP_ERR_NOT_SUPPORTED) for this cluster now that it
+// is served by CHIP's data_model_provider.
+#include <data_model_provider/clusters/illuminance_measurement/integration.h>
 
 // drivers implemented by this example
 #include <drivers/veml7700_handler.h>
@@ -140,26 +144,22 @@ extern "C" void app_main()
 
         if (sensor_veml7700_read(&lux) == ESP_OK && lux > 0) {
 
-            uint16_t matter_val =
-                (uint16_t)(log10f((float)lux) * 10000.0f) + 1;
+            uint16_t matter_val = lux_to_matter_value(lux);
 
-            esp_matter_attr_val_t attr =
-                esp_matter_nullable_uint16(matter_val);
+            // SetMeasuredValue() does not take the stack lock, so run it on the Matter
+            // thread. This mirrors how the official sensors example reports its readings.
+            chip::DeviceLayer::SystemLayer().ScheduleLambda([sensor_endpoint_id, matter_val, lux]() {
+                CHIP_ERROR cerr = chip::app::Clusters::IlluminanceMeasurement::SetMeasuredValue(
+                    sensor_endpoint_id, chip::app::DataModel::Nullable<uint16_t>(matter_val));
 
-            esp_err_t err = attribute::update(
-                sensor_endpoint_id,
-                IlluminanceMeasurement::Id,
-                IlluminanceMeasurement::Attributes::MeasuredValue::Id,
-                &attr
-            );
-
-            if (err != ESP_OK) {
-                ESP_LOGE("MAIN", "Matter update failed: %d", err);
-            } else {
-                ESP_LOGI("MAIN",
-                        "Lux: %lu → Matter: %u",
-                        lux, matter_val);
-            }
+                if (cerr != CHIP_NO_ERROR) {
+                    ESP_LOGE("MAIN", "Matter update failed: %" CHIP_ERROR_FORMAT, cerr.Format());
+                } else {
+                    ESP_LOGI("MAIN",
+                            "Lux: %lu → Matter: %u",
+                            (unsigned long)lux, matter_val);
+                }
+            });
         }
 
         vTaskDelay(pdMS_TO_TICKS(10000));
